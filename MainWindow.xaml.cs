@@ -19,6 +19,7 @@ namespace TextStatWpf
     {
         private List<string> list = new List<string>();
         private string text = string.Empty;
+        private delegate string StringDelegate(string text);
         public MainWindow()
         {
             InitializeComponent();
@@ -30,10 +31,8 @@ namespace TextStatWpf
         private void sent_Click(object sender, RoutedEventArgs e)
         {
             text = tbMult.Text;
-            var l = new Label
-            {
-                Content = CountSentences(text)
-            };
+            var l = new Label();
+            SetLabelContent(CountSentences, text, l);
             stack.Children.Add(l);
 
         }
@@ -41,40 +40,32 @@ namespace TextStatWpf
         private void symb_Click(object sender, RoutedEventArgs e)
         {
             text = tbMult.Text;
-            var l = new Label
-            {
-                Content = CountSymbols(text)
-            };
+            var l = new Label();
+            SetLabelContent(CountSymbols, text, l);
             stack.Children.Add(l);
         }
 
         private void word_Click(object sender, RoutedEventArgs e)
         {
             text = tbMult.Text;
-            var l = new Label
-            {
-                Content = CountWords(text)
-            };
+            var l = new Label();
+            SetLabelContent(CountWords, text, l);
             stack.Children.Add(l);
         }
 
         private void quest_Click(object sender, RoutedEventArgs e)
         {
             text = tbMult.Text;
-            var l = new Label
-            {
-                Content = CountQuestions(text)
-            };
+            var l = new Label();
+            SetLabelContent(CountQuestions, text, l);
             stack.Children.Add(l);
         }
 
-        private void excl_Click(object sender, RoutedEventArgs e)
+        private async void excl_Click(object sender, RoutedEventArgs e)
         {
             text = tbMult.Text;
-            var l = new Label
-            {
-                Content = CountExclamations(text)
-            };
+            var l = new Label();
+            SetLabelContent(CountExclamations,text,l);
             stack.Children.Add(l);
         }
 
@@ -106,6 +97,14 @@ namespace TextStatWpf
             int num = text.Where(t => t == '!').Count();
             return $"Exclamations: {num}";
         }
+
+        private async void SetLabelContent(StringDelegate cont, string text, Label l)
+        {
+            var content = await Task.Run(() => cont(text));
+            l.Content = content;
+        }
+
+
 
         private void tbMult_TextChanged(object sender, TextChangedEventArgs e)
         {
